@@ -43,8 +43,8 @@ export default {
     getPosts(section) {
       let url = buildUrl(section);
       axios.get(url).then((response) => {
-        console.log(this);
-        console.log(response);
+        // console.log(this);
+        // console.log(response);
         this.results = response.data.hits;
       }).catch( error => {error});
     }

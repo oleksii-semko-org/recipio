@@ -1,14 +1,28 @@
+<template>
+  <div class="hello">
+    <h1>SSSSSSSS</h1>
+  </div>
+</template>
+
 <script>
+import store from '../store/store';
+
 export default {
-  template: '#heading-section',
+  name: 'HeadingSection',
+  mounted () {
+    console.log('mounted');
+    this.fetchCuisinesRecipe();
+  },
   methods: {
     fetchCuisinesRecipe() {
-      this.$store.dispatch('fetchCuisinesRecipe');
+      console.log('fetchCuisinesRecipe 0', this);
+
+      store.dispatch('fetchCuisinesRecipe');
     }
   },
   computed: {
     recipes: () => {
-      return this.$store.state.recipes; // changed here
+      return store.state.recipes; // changed here
     }
   }
 }

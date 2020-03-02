@@ -2,12 +2,13 @@ const API_BASE_URL = 'https://api.edamam.com';
 const API_APP_KEY = 'b17a326c937b31d61f448827dee723e3';
 const API_APP_ID = 'b56b266a';
 const API_SEARCH_PATH = '/search';
+export const API_APP_ID_PARAM = 'app_id';
+export const API_APP_KEY_PARAM = 'app_key';
 
 export const API_AUTH_PARAMS = `${API_APP_ID_PARAM}=${API_APP_ID}&${API_APP_KEY_PARAM}=${API_APP_KEY}`
 export const API_SEARCH_ENDPOINT = `${API_BASE_URL}${API_SEARCH_PATH}?${API_AUTH_PARAMS}`;
 export const API_Q_PARAM = 'q';
-export const API_APP_ID_PARAM = 'app_id';
-export const API_APP_KEY_PARAM = 'app_key';
+
 export const API_FROM_PARAM = 'from';
 export const API_TO_PARAM = 'to';
 export const API_CUISINE_PARAM = 'cuisineType';
