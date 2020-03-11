@@ -1,6 +1,11 @@
 <template>
-  <div class="hello">
-    <h1>SSSSSSSS</h1>
+  <div class="categories">
+    <div class="category" v-for="category in categories" :key="category.idCategory">
+      <img :src="category.strCategoryThumb" />
+      <h1>{{ category.strCategory }}</h1>
+      <p>{{ category.strCategoryDescription }}</p>
+    </div>
+    
   </div>
 </template>
 
@@ -10,19 +15,16 @@ import store from '../store/store';
 export default {
   name: 'HeadingSection',
   mounted () {
-    console.log('mounted');
-    this.fetchCuisinesRecipe();
+    this.setHeaderClientData();
   },
   methods: {
-    fetchCuisinesRecipe() {
-      console.log('fetchCuisinesRecipe 0', this);
-
-      store.dispatch('fetchCuisinesRecipe');
-    }
+    setHeaderClientData() {
+      store.dispatch('storeCategories');
+    },
   },
   computed: {
-    recipes: () => {
-      return store.state.recipes; // changed here
+    categories: () => {
+      return store.state.categories;
     }
   }
 }

@@ -1,58 +1,54 @@
-import axios from 'axios';
-import Vuex from 'vuex';
 import Vue from 'vue';
-
-import {
-  API_SEARCH_ENDPOINT,
-  API_TO_PARAM,
-  API_CUISINE_PARAM,
-  CUISINE_CHINA,
-  CUISINE_ITALY,
-  CUISINE_KOSHER
-} from '../constants';
+import Vuex from 'vuex';
+import VuexPersistence from 'vuex-persist';
+import dataFetcher from '../../../services/dataFetcher/index'
 
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
-    recipes: {
-      cuisines: {}
+    categories: {
+    },
+    meals: {
     },
     isError: false,
   },
+  plugins: [new VuexPersistence().plugin],
   mutations: {
-    updateCuisines(state, payload) {
-      state.recipes.cuisines = payload
+    updateCategories(state, categories) {
+      state.categories = categories;
     },
     setStateError(state) {
       state.isError = true
     }
   },
   actions: {
-    async fetchCuisinesRecipe(context) {
-      console.log('fetchCuisinesRecipe 1');
+    storeCategories(context) {
+      const vuexLocalData = typeof(Storage) !== "undefined" ? window.localStorage.getItem("vuex") : null;
+      let localData = typeof vuexLocalData === 'string' ? JSON.parse(vuexLocalData) : null;
+      const categories = localData === null ? localData : localData.categories;      
 
-      const chinaCuisineEndpointParam = `${API_CUISINE_PARAM}=${CUISINE_CHINA}`;
-      const italyCuisineEndpointParam = `${API_CUISINE_PARAM}=${CUISINE_ITALY}`;
-      const kosherCuisineEndpointParam = `${API_CUISINE_PARAM}=${CUISINE_KOSHER}`;
+      if (vuexLocalData !== null && categories !== null) {
+        context.commit('updateCategories', categories);
+      } else {
+        const fetchCategories = dataFetcher.getMealCategories();
 
-      const requestChinaCuisine = await axios.get(`${API_SEARCH_ENDPOINT}&${chinaCuisineEndpointParam}`);
-      const requestItalCuisine = await axios.get(`${API_SEARCH_ENDPOINT}&${italyCuisineEndpointParam}&${API_TO_PARAM}=1`);
-      const requestKosherCuisine = await axios.get(`${API_SEARCH_ENDPOINT}&${kosherCuisineEndpointParam}&${API_TO_PARAM}=1`);
-
-      axios.all([requestChinaCuisine, requestItalCuisine, requestKosherCuisine]).then(axios.spread((...responses) => {
-        console.log('action fetchCuisinesRecipe');
-        const responseChinaCuisine = responses[0];
-        const responseItalCuisine = responses[1];
-        const responesKosherCuisine = responses[2];
-
-        context.commit('updateCuisines', [responesKosherCuisine, responseChinaCuisine, responseItalCuisine]); // check here
-
-      })).catch(errors => {
-        context.commit('setStateError', errors);
-      })
-
-
+        fetchCategories.then(response => {
+          if (response.status && response.status === 200 && response.data.categories) {
+            context.commit('updateCategories', response.data.categories);
+          } else {
+            console.log('response status ', response.status);
+          }
+        }).catch(errors => {
+          console.log('errors', errors);
+          context.commit('setStateError', errors);
+        });
+      }
+    }
+  },
+  getters: {
+    categoriesCount: state => {
+      return state.categoies.length;
     }
   }
 });
